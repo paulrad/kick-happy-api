@@ -1,0 +1,33 @@
+{
+  "name": "kick-happy-api",
+  "version": "1.0.0",
+  "description": "A simple kickstarter for build moderns API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulrad/kick-happy-api.git"
+  },
+  "keywords": [
+    "hapijs",
+    "kickstart",
+    "api",
+    "best",
+    "practices",
+    "boilerplate"
+  ],
+  "author": "Paul Rad <paul@paulrad.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paulrad/kick-happy-api/issues"
+  },
+  "homepage": "https://github.com/paulrad/kick-happy-api#readme",
+  "dependencies": {
+    "bluebird": "^3.0.2",
+    "hapi": "^11.0.2",
+    "mongoose": "^4.2.3",
+    "node-config": "0.0.2"
+  }
+}
