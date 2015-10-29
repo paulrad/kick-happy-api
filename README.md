@@ -37,6 +37,29 @@ Date: Thu, 29 Oct 2015 19:38:02 GMT
 Connection: keep-alive
 ```
 
+```zsh
+# Create a new user
+curl --data "email=mickey@mouse.com" -i -X POST http://localhost:3000/users
+```
+
+```zsh
+curl -i -X GET http://localhost:3000/users
+```
+
+Will return
+
+```zsh
+HTTP/1.1 200 OK
+content-type: application/json; charset=utf-8
+cache-control: no-cache
+content-length: 110
+accept-ranges: bytes
+Date: Thu, 29 Oct 2015 20:31:42 GMT
+Connection: keep-alive
+
+[{"_id":"56328227e7ff9b7066ca564a","email":"mickey@mouse.com","__v":0,"createdAt":"2015-10-29T20:31:35.612Z"}]%
+``
+
 ## Tests
 
 ```zsh

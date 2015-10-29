@@ -21,4 +21,6 @@ mongoConnections.forEach(function(mongoConnection) {
   mongooseConnection.on('connected', function() {
     console.log("Connected on the mongodb database: %s", mongoConnection.database);
   });
+
+  KH.$store('mongooseConnections', mongoConnection.database, mongooseConnection);
 });

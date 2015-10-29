@@ -6,14 +6,15 @@
  * MIT Licence (MIT)
  */
 var Config = require('config');
+var Mongoose = require('mongoose');
 var KH = global['KH'] = {};
 
 // the locals variables
 var $$ = {
   'controllers': {},
-  'connections': {},
   'helpers': {},
-  'models': {}
+  'models': {},
+  'mongooseConnections': {}
 };
 
 KH.utils = require('./utils.js');
@@ -22,27 +23,63 @@ KH.version = require('../package.json')['version'];
 /**
  * KH.$store(key, value)
  * @visibility privacy
+ *
+ * @usages
+ * KH.$store('key', 'value');
+ * KH.$store('key', 'subkey', 'subsubkey', 'value')
+ *
  * @returns KH
  * @todo description
  */
-KH.$store = function $store(key, value) {
-  $$[key] = value;
+
+KH.$store = function $store(key, value /* infinite args where value is the last arg */) {
+  if (arguments.length === 2) {
+    $$[key] = value;
+  } else {
+    var args = Array.prototype.slice.call(arguments);
+    value = args[args.length - 1];
+    arguments = args.splice(args.length - 1, 1);
+    var nestedKey = args.join('.');
+    return KH.$store(nestedKey, value);
+  }
   return KH;
 };
 
 /**
- * KH.$store(key)
+ * KH.$get(key)
+ *
+ * @usages
+ * KH.$get('key')
+ * KH.$get('key', 'subkey');
+ * KH.$get('key', 'subkey', 'subsubkey');
+ *
  * @visibility privacy
  * @returns KH
  * @todo {mixed} required object key
  */
-KH.$get = function $store(key) {
+KH.$get = function $get(key) {
+  var args = Array.prototype.slice.call(arguments);
+  if (args.length > 1) {
+    var nestedKey = args.join('.');
+    return KH.$get(nestedKey);
+  };
+  return $$[key];
+};
+
+// @alias wi throwable exception in case of undefined value
+// @todo: undo the duplication... move the nestedKey generation away !
+KH.$getStrict = function $getStrict(key) {
+  var args = Array.prototype.slice.call(arguments);
+  if (args.length > 1) {
+    var nestedKey = args.join('.');
+    return KH.$getStrict(nestedKey);
+  };
   if (typeof $$[key] === 'undefined') {
     throw new Error("The required object isn't again ready");
     return undefined;
   }
   return $$[key];
-};
+}
 
 /**
  * KH.config(property)
@@ -122,6 +159,83 @@ KH.controller = function controller(route) {
     return setController();
   } else {
     return getController();
+  }
+};
+
+/**
+ * KH.model(modelName)
+ * @params {String} modelName
+ * @params {Object} modelObject
+ *
+ * @description
+ * Getter / Setter of mongoose object
+ *
+ * @usage (getter)
+ * KH.model('database.collection');
+ *
+ * If the specified model doesn't exists, KH.model throw an exception
+ *
+ * @usage (setter) - used by the internal KH builtins
+ * KH.model({
+ *   database: 'kha',
+ *   collection: 'users',
+ *   schema: {}
+ * });
+ *
+ * @returns {Function} register mongoose model
+ * @returns {Object} KH if KH.model is used as setter
+ */
+KH.model = function model(model) {
+
+  // setModel
+  var setModel = function setModel() {
+
+    if (! KH.$get('mongooseConnections', model.database)) {
+      throw new Error("The model database seems unregistered");
+      return KH;
+    }
+
+    var schema = new Mongoose.Schema(model.schema);
+
+    if (model.statics) {
+      for (var modelStatic in model.statics) {
+        schema.statics[modelStatic] = model.statics[modelStatic];
+      }
+    }
+
+    if (model.methods) {
+      for (var modelMethod in model.methods) {
+        schema.methods[modelMethod] = model.methods[modelMethod];
+      }
+    }
+
+    var registeredModel = KH.$getStrict('mongooseConnections', model.database).model(model.name, schema);
+
+    KH.$store('models', model.database, model.name, registeredModel);
+
+    return KH;
+  };
+
+  // getModel
+  var getModel = function getModel() {
+
+    var arrArg = model.split('.');
+
+    if (! arrArg || arrArg.length !== 2) {
+      throw new Error("KH.model need the database.collection argument");
+      return false;
+    }
+
+    var database = arrArg[0];
+    var collection = arrArg[1];
+
+    return KH.$getStrict('models', database, collection);
+  };
+
+  if (KH.utils.isObject(model)) {
+    return setModel();
+  } else {
+    return getModel();
   }
 };
 

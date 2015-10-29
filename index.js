@@ -8,6 +8,7 @@
 
 require('./sys/kh.js');
 require('./sys/mongo.js');
+require('./sys/models.js');
 require('./sys/server.js');
 require('./sys/routes.js');
 
