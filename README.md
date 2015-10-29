@@ -135,3 +135,33 @@ KH.Model('database1.users').findOne({email: 'mickey@mouse.com'}).exec();
 If the model asked isn't accessible, KH.Model throw an exception.
 
 ### Routes
+
+Yours routes files *must returns* an array of valid [HapiJS routes](http://hapijs.com/tutorials/routing).
+
+You can save your routes in the main routes directory or in subdirectories if your want.
+
+#### How can i create new routes ?
+
+```javascript
+// Example routes
+// @file routes/index.js
+module.exports = [
+  {
+    method: 'GET',
+    path: '/',
+    handler: function(req, reply) {
+      reply().code(200);
+    }
+  },
+
+  {
+    method: 'GET',
+    path: '/current_time',
+    handler: function(req, reply) {
+      reply({
+        'current_time': + new Date()
+      }).code(200);
+    }
+  }
+];
+```
