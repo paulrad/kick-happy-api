@@ -64,8 +64,74 @@ Could contains yours mongoose plugins, for example.
 
 ##### /models
 
-Could contains helpers to help the work on yours mongoose collections.
+The `models` directory could contains helpers to help the work on yours mongoose collections.
 
 #### /models
 
-The models directory actually contains one subdirectory (mongoose) which is intended to host yours mongoose models.
+The `models` directory actually contains one subdirectory (mongoose) which is intended to host yours mongoose models.
+
+#### /routes
+
+The `routes` directory contains the routes used by the HapiJS framework.
+
+### Models
+
+The basic models structure is :
+
+```javascript
+var Types = require('mongoose').Schema.Types;
+
+module.exports = {
+
+  // Is required only in the case where your use multiple mongodb connections
+  database: 'my_mongo_database',
+
+  // The name of your collection
+  name: 'my_collection',
+
+  // The mongoose schema
+  schema: {
+    name: {
+      type: String
+    },
+
+    user: {
+      type: Types.ObjectId,
+      ref: 'users'
+    }
+  },
+
+  // An array of the plugins automatically registered on this Schema
+  plugins: [
+    'lastModified' // will automatically link your plugin lastModified presents in the helpers/mongoose/ directory
+  ],
+
+  // List of methods accessibles
+  methods: {
+    'myMethod': function() {
+
+    }
+  },
+  
+  // List of statics accessibles
+  statics: {
+    'myStatic': function() {
+
+    }
+  }
+
+};
+```
+
+#### How can i invoke a model ?
+
+Simply call KH.Model('collection') or KH.Model('database.collection'). It returns a registered mongoose model.
+
+```javascript
+// Example
+KH.Model('database1.users').findOne({email: 'mickey@mouse.com'}).exec();
+```
+
+If the model asked isn't accessible, KH.Model throw an exception.
+
+### Routes
