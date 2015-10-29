@@ -40,6 +40,8 @@ KH/A uses the following dependencies : hapijs, mongoose, bluebird, node-config.
   - /sys
     - hapi.js
     - models.js
+    - helpers.js
+    - routes.js
   - index.js
 
 #### /config
