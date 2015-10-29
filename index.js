@@ -6,3 +6,11 @@
  * MIT Licence (MIT)
  */
 
+require('./sys/kh.js');
+
+console.log(KH);
+
+
+process.on('uncaughtException', function(internalError) {
+  console.error(internalError);
+});

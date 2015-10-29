@@ -23,7 +23,7 @@ var getDependencies = function getDependencies(dependencies, setGlobal /* false 
     dependencies = require('./package.json')[dependencies];
   }
 
-  var formatName = function(name) {
+  var formatName = function formatName(name) {
     var hash = '';
     if (~name.indexOf('-')) {
       var namearr = name.split('-');
@@ -67,7 +67,7 @@ var getDependencies = function getDependencies(dependencies, setGlobal /* false 
  * @return
  * Tableau de fichiers en chemin absolu
  */
-var getFiles = function(path) {
+var getFiles = function getFiles(path) {
   path = path[path.length-1] !== '/' ? path + '/' : path;
   var files = [];
   var directories = [];
@@ -79,14 +79,14 @@ var getFiles = function(path) {
     process.exit();
   }
 
-  files = files.map(function(file) {
+  files = files.map(function mapOverFiles(file) {
     if (path[0] === '/') {
       path = path.substr(1);
     }
     return __dirname + '/' + path + file;
   });
 
-  files.forEach(function(file) {
+  files.forEach(function forEachFiles(file) {
     if (fs.lstatSync(file).isDirectory()) {
       var subfiles = [];
       var relpath = file.replace(__dirname, '');
@@ -115,7 +115,7 @@ var getFiles = function(path) {
  * @returnsType {Object}
  * @returns A object which contains each files contents
  */
-var loadFiles = function(path) {
+var loadFiles = function loadFiles(path) {
   return getFiles(path).map(function(file) {
     return require(file);
   });
@@ -127,11 +127,11 @@ var loadFiles = function(path) {
  * @returnsType boolean
  * @returns `true` if the given file is a type file
  */
-var isFile = function(path) {
+var isFile = function isFile(path) {
   try {
     var check = fs.lstatSync(path).isFile();
   } catch(e) {
-    console.error(e);
+    throw e;
     return false;
   }
   return check;
@@ -143,15 +143,24 @@ var isFile = function(path) {
  * @returnsType boolean
  * @returns `true` if the given file is a type directory
  */
-var isDirectory = function(path) {
+var isDirectory = function isDirectory(path) {
   return !isFile(path);
 };
 
+/**
+ * isObject(argument)
+ * Is `argument` is an object ?
+ * @returnsType {Boolean}
+ */
+var isObject = function isObject(arg) {
+  return typeof arg === 'object';
+};
 
 module.exports = {
   getDependencies: getDependencies,
   getFiles: getFiles,
   loadFiles: loadFiles,
   isFile: isFile,
-  isDirectory: isDirectory
+  isDirectory: isDirectory,
+  isObject: isObject
 };

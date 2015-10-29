@@ -29,5 +29,8 @@
     "hapi": "^11.0.2",
     "mongoose": "^4.2.3",
     "node-config": "0.0.2"
+  },
+  "devDependencies": {
+    "chai": "^3.4.0"
   }
 }
