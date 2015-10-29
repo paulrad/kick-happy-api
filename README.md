@@ -15,7 +15,7 @@ KHA give a simple approche and the good way to start the development of your nex
 
 ## Quickstart
 
-```bash
+```zsh
 git clone git@github.com:paulrad/kick-happy-api.git ./my-project
 cd my-project
 npm i --production
@@ -24,7 +24,7 @@ node index.js
 
 Then..
 
- ```bash
+ ```zsh
 curl -i -X HEAD http://localhost:3000
 HTTP/1.1 200 OK
 cache-control: no-cache
@@ -33,7 +33,8 @@ Connection: keep-alive
 ```
 
 ## Tests
-```bash
+
+```zsh
 npm i -g mocha && npm i && mocha
 ```
 
