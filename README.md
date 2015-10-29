@@ -26,6 +26,11 @@ Then..
 
  ```zsh
 curl -i -X HEAD http://localhost:3000
+```
+
+Expected response is :
+
+```
 HTTP/1.1 200 OK
 cache-control: no-cache
 Date: Thu, 29 Oct 2015 19:38:02 GMT
