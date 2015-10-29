@@ -24,7 +24,7 @@ node index.js
 
 Then..
 
- ```zsh
+```zsh
 curl -i -X HEAD http://localhost:3000
 ```
 
