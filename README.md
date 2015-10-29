@@ -1,9 +1,9 @@
-# kick-happy-api
+# Kick-Happy/Api
 A HapiJS API backend kickstarter
 
 ## Intro
 
-Kick-Happy-Api (aka KHA) is a simple kickstarter for your Node.JS projects using the HapiJS framework.
+Kick-Happy-Api (aka KH/A - differs of the front version called KH/W) is a simple kickstarter for your Node.JS projects using the HapiJS framework.
 KHA give a simple approche and the good way to start the development of your next API as fast as possible.
 
 ## Quickstart
@@ -17,7 +17,7 @@ node index.js
 
 ## Development
 
-KHA uses the following dependencies : hapijs, mongoose, bluebird, node-config.
+KH/A uses the following dependencies : hapijs, mongoose, bluebird, node-config.
 
 ### Structure
 
@@ -50,7 +50,7 @@ The default json configuration file loaded will be `default.json`. If your load 
 
 #### /helpers
 
-The helpers files are accessible globally via the method `KHA.Helpers` (eg: `KHA.Helpers('models/users')` will return all the methods of the `helpers/models/users.js` file.
+The helpers files are accessible globally via the method `KH.Helpers` (eg: `KH.Helpers('models/users')` will return all the methods of the `helpers/models/users.js` file - see the API chapter for more informations about the KA global object).
 
 The helpers directory is subdivided in (actually) 4 subdirectories:
 
