@@ -4,7 +4,6 @@ var chai = require('chai')
     should = chai.should();
 
 require('../sys/kh.js');
-console.log(KH)
 
 describe('KH', function() {
 

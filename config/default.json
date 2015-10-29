@@ -1,0 +1,19 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": "3000"
+  },
+
+  "mongodb": [
+    {
+      "database": "kha",
+      "uri": "mongodb://localhost",
+      "options": {
+        "db": {
+          "native_parser": true
+        }
+      }
+    }
+  ]
+
+}

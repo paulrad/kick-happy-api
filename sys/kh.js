@@ -5,6 +5,7 @@
  * @copyright 2015 Paul Rad
  * MIT Licence (MIT)
  */
+var Config = require('config');
 var KH = global['KH'] = {};
 
 // the locals variables
@@ -17,6 +18,38 @@ var $$ = {
 
 KH.utils = require('./utils.js');
 KH.version = require('../package.json')['version'];
+
+/**
+ * KH.$store(key, value)
+ * @visibility privacy
+ * @returns KH
+ * @todo description
+ */
+KH.$store = function $store(key, value) {
+  $$[key] = value;
+  return KH;
+};
+
+/**
+ * KH.$store(key)
+ * @visibility privacy
+ * @returns KH
+ * @todo {mixed} required object key
+ */
+KH.$get = function $store(key) {
+  if (typeof $$[key] === 'undefined') {
+    throw new Error("The required object isn't again ready");
+    return undefined;
+  }
+  return $$[key];
+};
+
+/**
+ * KH.config(property)
+ * @params {String} property
+ * @alias of require('config').get(property)
+ */
+KH.config = Config.get.bind(Config);
 
 /**
  * KH.controller(path | route)
@@ -50,7 +83,7 @@ KH.controller = function controller(route) {
   // KH.controller({String})
   var getController = function getController() {
     if (! $$.controllers[route]) {
-      throw new Error("Undefined controller reference");
+      throw new Error("Undefined route reference");
     } else {
       return $$.controllers[route];
     }
@@ -64,6 +97,9 @@ KH.controller = function controller(route) {
 
       if (routepath[0] === '/') {
         routepath = routepath.substr(1);
+        if (routepath.length === 0) {
+          routepath = 'index';
+        }
       };
 
       if (routepath[routepath.length-1] === '/') {
@@ -74,12 +110,28 @@ KH.controller = function controller(route) {
     };
 
     $$.controllers[routeObjectToString()] = route.handler;
+    KH.$get('server').route(route);
     return KH;
   };
 
   if (KH.utils.isObject(route)) {
+    if (! route.method || ! route.path || ! route.handler) {
+      throw new Error("The route object should contains method, path and handler properties");
+      return KH;
+    }
     return setController();
   } else {
     return getController();
   }
+};
+
+/**
+ * KH.server()
+ * @description
+ * Get the current Hapi Server object
+ * Defined in sys/server.js
+ * @returns {Object} Hapi.Server instance
+ */
+KH.server = function server() {
+  return KH.$get('server');
 };

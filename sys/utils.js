@@ -7,6 +7,7 @@
  */
 
 var fs = require('fs');
+var glob = require('glob');
 
 /**
  * getDependencies(dependencies, setGlobal)
@@ -20,7 +21,7 @@ var fs = require('fs');
 var getDependencies = function getDependencies(dependencies, setGlobal /* false */) {
 
   if (typeof dependencies === 'string') {
-    dependencies = require('./package.json')[dependencies];
+    dependencies = require('../package.json')[dependencies];
   }
 
   var formatName = function formatName(name) {
@@ -62,51 +63,18 @@ var getDependencies = function getDependencies(dependencies, setGlobal /* false 
 };
 
 /**
- * getFiles(string: path)
- * Retourne une liste de fichiers présents dans `path`
+ * getFiles(string: path, string: realpath)
+ * @params {String} path
+ * @params {String} extensions
  * @return
- * Tableau de fichiers en chemin absolu
+ * Tableau de fichiers en chemin absolu si realpath est à true
  */
-var getFiles = function getFiles(path) {
-  path = path[path.length-1] !== '/' ? path + '/' : path;
-  var files = [];
-  var directories = [];
-
-  try {
-    files = fs.readdirSync(__dirname + '/' + path);
-  } catch (e) {
-    console.error(e);
-    process.exit();
-  }
-
-  files = files.map(function mapOverFiles(file) {
-    if (path[0] === '/') {
-      path = path.substr(1);
-    }
-    return __dirname + '/' + path + file;
+var getFiles = function getFiles(path, realpath) {
+  return glob.sync(path, {
+    cwd: require('path').join(__dirname, '..'),
+    nodir: true,
+    realpath: realpath
   });
-
-  files.forEach(function forEachFiles(file) {
-    if (fs.lstatSync(file).isDirectory()) {
-      var subfiles = [];
-      var relpath = file.replace(__dirname, '');
-
-      getFiles(relpath).forEach(function(subfile) {
-        subfiles.push(subfile);
-      });
-
-      if (subfiles.length) {
-        files = files.concat(subfiles);
-      }
-      directories.push(file);
-    }
-  });
-
-  directories.forEach(function(directory) {
-    files.splice(files.indexOf(directory), 1);
-  });
-
-  return files;
 };
 
 /**
@@ -148,6 +116,15 @@ var isDirectory = function isDirectory(path) {
 };
 
 /**
+ * isArray(string arg)
+ * Is `arg` is an array ?
+ * @returnsType boolean
+ */
+var isArray = function isArray(arg) {
+  return Array.isArray(arg);
+};
+
+/**
  * isObject(argument)
  * Is `argument` is an object ?
  * @returnsType {Boolean}
@@ -162,5 +139,6 @@ module.exports = {
   loadFiles: loadFiles,
   isFile: isFile,
   isDirectory: isDirectory,
+  isArray: isArray,
   isObject: isObject
 };

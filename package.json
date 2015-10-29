@@ -26,9 +26,10 @@
   "homepage": "https://github.com/paulrad/kick-happy-api#readme",
   "dependencies": {
     "bluebird": "^3.0.2",
+    "config": "^1.16.0",
+    "glob": "^5.0.15",
     "hapi": "^11.0.2",
-    "mongoose": "^4.2.3",
-    "node-config": "0.0.2"
+    "mongoose": "^4.2.3"
   },
   "devDependencies": {
     "chai": "^3.4.0"

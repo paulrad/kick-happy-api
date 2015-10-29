@@ -7,8 +7,9 @@
  */
 
 require('./sys/kh.js');
-
-console.log(KH);
+require('./sys/mongo.js');
+require('./sys/server.js');
+require('./sys/routes.js');
 
 
 process.on('uncaughtException', function(internalError) {
