@@ -48,15 +48,19 @@ The config directory contains the configurations files. The node plugin [node-co
 
 The default json configuration file loaded will be `default.json`. If your load an other configuration file (eg: `export NODE_ENV=production`), properties of the `production.json` will override the defaults properties.
 
+Your configurations properties are accessibles via the method `KH.config()`
+
 #### /helpers
 
-The helpers files are accessible globally via the method `KH.Helpers` (eg: `KH.Helpers('models/users')` will return all the methods of the `helpers/models/users.js` file - see the API chapter for more informations about the KA global object).
+The helpers files are accessible globally via the method `KH.Helpers` (eg: `KH.helpers('models/users')` will return all the methods of the `helpers/models/users.js` file - see the API chapter for more informations about the KA global object).
 
 The helpers directory is subdivided in (actually) 4 subdirectories:
 
 ##### /hapi
 
 Contains by default the file `auth_strategies.js`.
+
+We can use this directory to store invokations of yours HapiJS plugins. The HapiJS `server` object is accessible via the method `KH.server()`
 
 ##### /mongoose
 
@@ -125,11 +129,11 @@ module.exports = {
 
 #### How can i invoke a model ?
 
-Simply call KH.Model('collection') or KH.Model('database.collection'). It returns a registered mongoose model.
+Simply call `KH.model('collection')` or `KH.model('database.collection')`. It returns a registered mongoose model.
 
 ```javascript
 // Example
-KH.Model('database1.users').findOne({email: 'mickey@mouse.com'}).exec();
+KH.model('database1.users').findOne({email: 'mickey@mouse.com'}).exec();
 ```
 
 If the model asked isn't accessible, KH.Model throw an exception.
@@ -165,3 +169,28 @@ module.exports = [
   }
 ];
 ```
+
+## API
+
+### `KH`
+
+Is a global object accessible everywhere in your code.
+
+#### `KH.controller`
+
+#### `KH.helper`
+
+#### `KH.model`
+
+#### `KH.server`
+
+Returns the `server` object invoked by `new Hapi.Server()`.
+
+##### Usage
+`KH.server();`
+
+##### Arguments
+No argument
+
+##### Returns
+Will returns the Hapi.Server instance.
