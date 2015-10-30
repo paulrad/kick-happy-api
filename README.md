@@ -265,16 +265,55 @@ Get configurations properties depending your current `NODE_ENV` environment vari
 `KH.config('mongodb');`
 
 ##### Arguments
-String
+{ String }
 
 ##### Returns
-Mixed
+{ Mixed }
+
+---
 
 #### `KH.controller`
 
+Get the desired controller handler.
+
+##### Usage
+```javascript
+KH.controller('get.index');
+KH.controller('post.users');
+KH.controller('delete.users.{id}');
+```
+
+##### Arguments
+{ String } The route method followed by the route path, according the HapiJS route convention.
+
+##### Returns
+{ Function } the route handler, or undefined if don't exist.
+
+---
+
 #### `KH.helper`
 
+@todo
+
+---
+
 #### `KH.model`
+
+Returns the desired mongoose model.
+
+##### Usage
+```javascript
+KH.model('database.model');
+KH.model('database.model').findOne({name: 'toto'}); // ...
+```
+
+##### Arguments
+{ String } Where the prefix represents the database and the suffix the collection.
+
+##### Returns
+Will return the mongoose model instance.
+
+---
 
 #### `KH.server`
 
@@ -287,4 +326,4 @@ Returns the `server` object invoked by `new Hapi.Server()`.
 No argument
 
 ##### Returns
-Will returns the Hapi.Server instance.
+Will return the Hapi.Server instance.
