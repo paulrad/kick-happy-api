@@ -7,6 +7,7 @@
  */
 
 require('./sys/kh.js');
+require('./sys/logger.js');
 require('./sys/mongo.js');
 require('./sys/models.js');
 require('./sys/server.js');

@@ -14,12 +14,12 @@ mongoConnections.forEach(function(mongoConnection) {
   var mongooseConnection = Mongoose.createConnection(uri, mongoConnection.options);
 
   mongooseConnection.on('error', function(e) {
-    console.error("I can't perform this mongodb connection");
+    KH.log('error', "I can't perform this mongodb connection");
     throw new Error(e);
   });
 
   mongooseConnection.on('connected', function() {
-    console.log("Connected on the mongodb database: %s", mongoConnection.database);
+    KH.log('info', "Connected on the mongodb database: %s", mongoConnection.database);
   });
 
   KH.$store('mongooseConnections', mongoConnection.database, mongooseConnection);
