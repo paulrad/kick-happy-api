@@ -8,6 +8,11 @@ A HapiJS API backend kickstarter
 Kick-Happy-Api (aka KH/A - differs of the front version called KH/W) is a simple kickstarter for your Node.JS projects using the HapiJS framework.
 KHA give a simple approche and the good way to start the development of your next API as fast as possible.
 
+### Guidelines
+ - Easy to use
+ - Minimal abstraction
+ - Follow the bests practices
+
 ## Requirements
 
 - You need to setup a mongodb server
