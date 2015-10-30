@@ -255,6 +255,21 @@ Provides useful methods.
 
 ##### `KH.utils.isUndefined`
 
+#### `KH.config`
+
+Simple accessor of the `require('config').get` method.
+
+Get configurations properties depending your current `NODE_ENV` environment variable.
+
+##### Usage
+`KH.config('mongodb');`
+
+##### Arguments
+String
+
+##### Returns
+Mixed
+
 #### `KH.controller`
 
 #### `KH.helper`
