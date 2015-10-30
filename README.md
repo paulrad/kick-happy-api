@@ -58,7 +58,7 @@ Date: Thu, 29 Oct 2015 20:31:42 GMT
 Connection: keep-alive
 
 [{"_id":"56328227e7ff9b7066ca564a","email":"mickey@mouse.com","__v":0,"createdAt":"2015-10-29T20:31:35.612Z"}]%
-``
+```
 
 ## Tests
 
