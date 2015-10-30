@@ -229,6 +229,32 @@ module.exports = [
 
 Is a global object accessible everywhere in your code.
 
+#### `KH.utils`
+
+Provides useful methods.
+
+##### `KH.utils.getDependencies`
+
+##### `KH.utils.getFiles`
+
+##### `KH.utils.loadFiles`
+
+##### `KH.utils.isObject`
+
+##### `KH.utils.isArray`
+
+##### `KH.utils.isString`
+
+##### `KH.utils.isNumber`
+
+##### `KH.utils.isPromise`
+
+##### `KH.utils.isDirectory`
+
+##### `KH.utils.isDefined`
+
+##### `KH.utils.isUndefined`
+
 #### `KH.controller`
 
 #### `KH.helper`
