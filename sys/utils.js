@@ -78,22 +78,21 @@ var getFiles = function getFiles(path, realpath) {
 };
 
 /**
- * loadFiles(string: path)
+ * loadFiles
  * Charge le contenu des fichiers présent dans 'path'
  * @returnsType {Object}
  * @returns A object which contains each files contents
  */
 var loadFiles = function loadFiles(path) {
-  return getFiles(path).map(function(file) {
+  return getFiles(path, true).map(function(file) {
     return require(file);
   });
 };
 
 /**
- * isFile(string: path)
+ * isFile
  * Is `path` is a file ?
- * @returnsType boolean
- * @returns `true` if the given file is a type file
+ * @returns {boolean} `true` if the given file is a type file
  */
 var isFile = function isFile(path) {
   try {
@@ -106,31 +105,89 @@ var isFile = function isFile(path) {
 };
 
 /**
- * isDirectory(string: path)
+ * isDirectory
  * Is `path` is a directory ?
- * @returnsType boolean
- * @returns `true` if the given file is a type directory
+ * @returns {boolean} `true` if the given file is a type directory
+ *
+ * @todo fix (symlinks..)
  */
 var isDirectory = function isDirectory(path) {
   return !isFile(path);
 };
 
 /**
- * isArray(string arg)
+ * isArray
  * Is `arg` is an array ?
- * @returnsType boolean
+ *
+ * @param {*} reference to check
+ * @retruns {boolean} true if argument is an array
  */
-var isArray = function isArray(arg) {
-  return Array.isArray(arg);
+var isArray = Array.isArray;
+
+/**
+ * isObject
+ * Is `argument` is an object ?
+ *
+ * @param {*} reference to check
+ * @returns {boolean} True if `arg` is a valid `object` and different of NULL
+ */
+var isObject = function isObject(arg) {
+  return arg !== null && typeof arg === 'object';
 };
 
 /**
- * isObject(argument)
- * Is `argument` is an object ?
- * @returnsType {Boolean}
+ * isString
+ * Determines if a value is a string
+ *
+ * @param {*} reference to check
+ * @returns {boolean} True if `arg` is a `String`
  */
-var isObject = function isObject(arg) {
-  return typeof arg === 'object';
+var isString = function isString(arg) {
+  return typeof arg === 'string';
+};
+
+/**
+ * isFunction
+ * Determines if a value is a function
+ *
+ * @param {*} reference to check
+ * @returns {boolean} True if `arg` is a `Function`
+ */
+var isFunction = function isFunction(arg) {
+  return typeof arg === 'function';
+};
+
+/**
+ * isPromise
+ * Determines if a value is a promise
+ *
+ * @param {*} reference to check
+ * @returns {boolean} True if `arg` is a `Promise`
+ */
+var isPromise = function isPromise(arg) {
+  return isObject(arg) && isFunction(arg.then);
+};
+
+/**
+ * isDefined
+ * Determines if a value is defined
+ *
+ * @param {*} reference to check
+ * @returns {boolean} True if `arg` is defined
+ */
+var isDefined = function isDefined(arg) {
+  return typeof arg !== 'undefined';
+};
+
+/**
+ * isUndefined
+ * Determines if a value is undefined
+ *
+ * @param {*} reference to check
+ * @returns {boolean} True if `arg` is undefined
+ */
+var isUndefined = function isUndefined(arg) {
+  return typeof arg === 'undefined';
 };
 
 module.exports = {
@@ -140,5 +197,10 @@ module.exports = {
   isFile: isFile,
   isDirectory: isDirectory,
   isArray: isArray,
-  isObject: isObject
+  isObject: isObject,
+  isString: isString,
+  isFunction: isFunction,
+  isPromise: isPromise,
+  isDefined: isDefined,
+  isUndefined: isUndefined
 };

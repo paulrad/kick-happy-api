@@ -40,6 +40,21 @@ module.exports = {
     'myStatic': function() {
 
     }
+  },
+
+  // List of middleware
+  // @see http://mongoosejs.com/docs/middleware.html
+  middleware: {
+    pre: {
+      init: [],
+      validate: [],
+      save: [],
+      remove: [],
+      count: [],
+      find: [],
+      // ... see complete list at http://mongoosejs.com/docs/middleware.html
+    },
+    post: { /** you can create post middleware here too */}
   }
 
 };

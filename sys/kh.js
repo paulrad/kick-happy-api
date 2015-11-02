@@ -209,6 +209,34 @@ KH.model = function model(model) {
       }
     }
 
+    if (model.middleware) {
+      for (var middlewareMethod in model.middleware) {
+        for (var middlewareActions in model.middleware[middlewareMethod]) {
+          var actions = model.middleware[middlewareMethod][middlewareActions];
+          actions.forEach(function(action) {
+            var actionObject = {
+              parallel: false,
+              action: null
+            };
+
+            if (KH.utils.isObject(action)) {
+              actionObject.parallel = action.parallel || actionObject.parallel;
+              actionObject.action = action.action || actionObject.action;
+            } else {
+              actionObject.parallel = false;
+              actionObject.action = action;
+            }
+
+            if (actionObject.parallel === true) {
+              schema[middlewareMethod](middlewareActions, true, actionObject.action.bind(this));
+            } else {
+              schema[middlewareMethod](middlewareActions, actionObject.action.bind(this));
+            }
+          });
+        }
+      }
+    }
+
     var registeredModel = KH.$getStrict('mongooseConnections', model.database).model(model.name, schema);
 
     KH.$store('models', model.database, model.name, registeredModel);

@@ -6,11 +6,9 @@ if (models) {
     var modelObject = require(model);
 
     if (KH.utils.isObject(modelObject)) {
-
       KH.model(modelObject);
     } else {
-      // @todo
-      // debug or trace - model is not a valid object
+      KH.log("error", "I can't install this scheme, model is not valid");
     }
 
   });
