@@ -163,6 +163,30 @@ module.exports = {
     }
   },
 
+  // @see http://mongoosejs.com/docs/guide.html#options
+  options: {
+    toObject: {
+      virtuals: true
+    },
+    toJSON: {
+      virtuals: true
+    }
+  },
+
+  // @see http://mongoosejs.com/docs/guide.html#virtuals
+  virtuals: {
+    fullname: {
+      get: function() {
+        return this.firstname + ' ' + this.lastname;
+      },
+      set: function(name) {
+        var split = name.split(' ');
+        this.firstname = split[0];
+        this.lastname = split[1];
+      }
+    }
+  },
+
   // An array of the plugins automatically registered on this Schema
   plugins: [
     'lastModified' // will automatically link your plugin lastModified presents in the helpers/mongoose/ directory
@@ -293,6 +317,27 @@ KH.controller('delete.users.{id}');
 
 ##### Returns
 { Function } the route handler, or undefined if don't exist.
+
+---
+
+#### `KH.extend`
+
+Extend the KH global object.
+
+##### Usage
+```javascript
+KH.extend('myMethod', function() {
+  return KH.log('info', 'hello world');
+});
+KH.myMethod(); // will show 'hello world'
+```
+
+##### Arguments
+{ String } method name
+{ Mixed } Function or Object
+
+##### Returns
+KH
 
 ---
 

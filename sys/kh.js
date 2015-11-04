@@ -163,6 +163,73 @@ KH.controller = function controller(route) {
 };
 
 /**
+ * KH.extend(methodName, objectProperties)
+ * @params {String} methodName
+ * @params {Object} objectProperties
+ *
+ * @description
+ * @todo
+ * @usage
+ * KH.extend('hello', function() { return 'hello'; })
+ * > KH.hello(); // returns hello
+ *
+ * KH.extend('hello.world', function() {
+ *   return 'hello world';
+ * });
+ * > KH.hello.world(); // returns hello world
+ * /!\ If you extend a function, the main function will be
+ * converted as a singleton instance
+ *
+ * KH.extend('CONSTANTS', {
+ *  lang: 'fr-fr',
+ *  minAge: 18
+ * });
+ *
+ * // @todo
+ * // detects models extensions
+ * KH.extend('models.database.collection.statics', {
+ *   doSomething: function() {
+ *     return this.model('collection').find({ sent: false }).exec()
+ *   }
+ * });
+ *
+ * > KH.model('database.collection').doSomething().then(function() { }); ...
+ *
+ */
+KH.extend = function extend(methodName, objectProperties) {
+
+  function mixin(target) {
+    var sources = [].slice.call(arguments, 1);
+    sources.forEach(function (source) {
+        for (var prop in source) {
+            target[prop] = source[prop];
+        }
+    });
+    return target;
+  }
+
+  for (var parts = methodName.split('.'), i=0, l=parts.length, cache = KH; i<l; i++) {
+    if (!cache[parts[i]]) { 
+      if (i + 1 === l) {
+        cache[parts[i]] = objectProperties;
+      } else {
+        cache[parts[i]] = {};
+      }
+    } else if (i + 1 === l) {
+      var oldProperties = cache[parts[i]];
+      if (KH.utils.isFunction(oldProperties)) {
+        KH.log('warn', "Previous index was a function and will be converted has class instance");
+        oldProperties = new oldProperties();
+      }
+      cache[parts[i]] = mixin({}, oldProperties, objectProperties);
+    }
+    cache = cache[parts[i]];
+  }
+
+  return KH;
+};
+
+/**
  * KH.model(modelName)
  * @params {String} modelName
  * @params {Object} modelObject
@@ -195,7 +262,7 @@ KH.model = function model(model) {
       return KH;
     }
 
-    var schema = new Mongoose.Schema(model.schema);
+    var schema = new Mongoose.Schema(model.schema, model.options || {});
 
     if (model.statics) {
       for (var modelStatic in model.statics) {
@@ -206,6 +273,19 @@ KH.model = function model(model) {
     if (model.methods) {
       for (var modelMethod in model.methods) {
         schema.methods[modelMethod] = model.methods[modelMethod];
+      }
+    }
+
+    if (model.virtuals) {
+      for (var modelVirtual in model.virtuals) {
+        var getter = model.virtuals[modelVirtual].get;
+        var setter = model.virtuals[modelVirtual].set;
+        if (getter) {
+          schema.virtual(modelVirtual).get(getter);
+        }
+        if (setter) {
+          schema.virtual(modelVirtual).set(setter);
+        }
       }
     }
 

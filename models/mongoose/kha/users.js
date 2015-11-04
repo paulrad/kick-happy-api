@@ -12,13 +12,49 @@ module.exports = {
   schema: {
 
     email: {
-      type: String
+      type: String,
+      index: true,
+      required: true
+    },
+
+    firstname: {
+      type: String,
+      required: true
+    },
+
+    lastname: {
+      type: String,
+      required: true
     },
 
     createdAt: {
       type: Date,
       default: function() {
         return Date.now();
+      }
+    }
+  },
+
+  // @see http://mongoosejs.com/docs/guide.html#options
+  options: {
+    toObject: {
+      virtuals: true
+    },
+    toJSON: {
+      virtuals: true
+    }
+  },
+
+  // @see http://mongoosejs.com/docs/guide.html#virtuals
+  virtuals: {
+    fullname: {
+      get: function() {
+        return this.firstname + ' ' + this.lastname;
+      },
+      set: function(name) {
+        var split = name.split(' ');
+        this.firstname = split[0];
+        this.lastname = split[1];
       }
     }
   },
