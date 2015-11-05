@@ -13,7 +13,6 @@ server.start(function(err) {
     throw err;
     return ;
   }
-  KH.log("info", "Server is ready on %s:%s", server.info.host, server.info.port);
 });
 
 KH.$store('server', server);

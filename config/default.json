@@ -4,6 +4,12 @@
     "port": "3000"
   },
 
+  "serverAuth": {
+    "key": "neverShareYouKeySecret",
+    "algorithms": [ "HS256" ],
+    "algorithm": "HS256"
+  },
+
   "mongodb": [
     {
       "database": "kha",

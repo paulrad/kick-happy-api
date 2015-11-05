@@ -7,11 +7,13 @@
  */
 var Config = require('config');
 var Mongoose = require('mongoose');
+var _ = require('lodash');
+
 var KH = global['KH'] = {};
 
 // the locals variables
 var $$ = {
-  'controllers': {},
+  'controllers': [],
   'helpers': {},
   'models': {},
   'mongooseConnections': {}
@@ -119,10 +121,15 @@ KH.controller = function controller(route) {
 
   // KH.controller({String})
   var getController = function getController() {
-    if (! $$.controllers[route]) {
+
+    var indexRoute = $$.controllers.find(function(controller) {
+      return controller.$$routepath === route;
+    });
+
+    if (! indexRoute) {
       throw new Error("Undefined route reference");
     } else {
-      return $$.controllers[route];
+      return indexRoute;
     }
   };
 
@@ -146,8 +153,20 @@ KH.controller = function controller(route) {
       return route.method.toLowerCase() + '.' + routepath;
     };
 
-    $$.controllers[routeObjectToString()] = route.handler;
-    KH.$get('server').route(route);
+    route['$$routepath'] = routeObjectToString(route);
+
+    // setter
+    // merge options to route options
+    route['$$merge'] = function(options) {
+      $$.controllers.forEach(function(controller, idx) {
+        if (controller.$$routepath === route.$$routepath) {
+          $$.controllers[idx] = _.merge(controller, options);
+        }
+      });
+    };
+
+    $$.controllers.push(route);
+
     return KH;
   };
 
@@ -159,6 +178,34 @@ KH.controller = function controller(route) {
     return setController();
   } else {
     return getController();
+  }
+};
+
+/**
+ * KH.controllers(sanitize)
+ * @params {Boolean} sanitize (default = true)
+ * @description
+ * Return entire controllers list
+ */
+KH.controllers = function controllers(sanitize) {
+  
+  // exclude private variables
+  // from controllers routes
+  var sanitizeObject = function(controllers) {
+    return controllers.map(function(controller) {
+      for (var k in controller) {
+        if (k.substr(0, 2) === '$$') {
+          delete controller[k];
+        }
+      }
+      return controller;
+    });
+  };
+
+  if (KH.utils.isUndefined(sanitize) || sanitize === true) {
+    return sanitizeObject($$.controllers);
+  } else {
+    return $$.controllers;
   }
 };
 

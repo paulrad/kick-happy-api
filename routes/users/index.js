@@ -1,14 +1,16 @@
+/**
+ *
+ *
+ */
 module.exports = [
   {
     method: 'GET',
     path: '/users',
     config: {
-      /*
       auth: {
         strategy: 'simple',
         scope: 'admin'
       }
-      */
     },
     handler: function(req, reply) {
       var dbquery = KH.model('kha.users').find({}).lean().exec();
