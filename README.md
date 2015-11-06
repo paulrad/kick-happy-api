@@ -303,7 +303,7 @@ Get configurations properties depending your current `NODE_ENV` environment vari
 
 #### `KH.controller`
 
-Get the desired controller handler.
+Get the desired controller object.
 
 ##### Usage
 ```javascript
@@ -316,9 +316,26 @@ KH.controller('delete.users.{id}');
 { String } The route method followed by the route path, according the HapiJS route convention.
 
 ##### Returns
-{ Function } the route handler, or undefined if don't exist.
+{ Object } the controller, or undefined if don't exist.
 
 ---
+
+#### `KH.controllers`
+Get controllers array.
+
+##### Usage
+
+```javascript
+KH.controllers().forEach(function(controller) {
+  console.log(controller);
+});
+```
+
+##### Arguments
+{ Boolean } sanitizeObject (default `true`)
+
+##### Returns
+{ Array } controllers
 
 #### `KH.extend`
 
@@ -330,6 +347,24 @@ KH.extend('myMethod', function() {
   return KH.log('info', 'hello world');
 });
 KH.myMethod(); // will show 'hello world'
+```
+
+You can extend a nested object simple like this :
+```javascript
+KH.extend('my.useful.object', {
+  name: 'Paul'
+});
+
+KH.extend('my.useful.object', {
+  email: 'paul@paulrad.com'
+});
+
+// And then
+console.log(KH.my.useful.object);
+{
+  name: 'Paul',
+  email: 'paul@paulrad.com'
+}
 ```
 
 ##### Arguments
