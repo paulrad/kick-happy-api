@@ -11,8 +11,7 @@ module.exports = [
     path: '/users',
     config: {
       auth: {
-        strategy: 'simple',
-        scope: 'admin'
+        strategy: 'simple'
       }
     },
     handler: function(req, reply) {

@@ -44,7 +44,7 @@ Connection: keep-alive
 
 ```zsh
 # Create a new user
-curl --data "email=mickey@mouse.com" -i -X POST http://localhost:3000/users
+curl --data "email=mickey@mouse.com,password=mini,firstname=mickey,lastname=mouse" -i -X POST http://localhost:3000/users
 ```
 
 ```zsh
@@ -211,11 +211,11 @@ module.exports = {
 
 #### How can i invoke a model ?
 
-Simply call `KH.model('collection')` or `KH.model('database.collection')`. It returns a registered mongoose model.
+Simply call `KH.model('dbsystem.database.collection')`. It returns a registered mongoose model.
 
 ```javascript
 // Example
-KH.model('database1.users').findOne({email: 'mickey@mouse.com'}).exec();
+KH.model('mongo.kha.users').findOne({email: 'mickey@mouse.com'}).exec();
 ```
 
 If the model asked isn't accessible, KH.Model throw an exception.

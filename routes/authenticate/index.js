@@ -1,9 +1,11 @@
-var joi = require('joi');
+var Q = require('bluebird');
+var Joi = require('joi');
 var Users = KH.model('mongo.kha.users');
 
 /**
- *
- *
+ * POST /authenticate
+ * @description
+ * Check credentials and generate a new JWT accessToken
  */
 module.exports = [
   {
@@ -12,8 +14,8 @@ module.exports = [
     config: {
       validate: {
         payload: {
-          email: joi.string().email().required(),
-          password: joi.string().required()
+          email: Joi.string().email().required(),
+          password: Joi.string().required()
         }
       }
     },
@@ -34,6 +36,29 @@ module.exports = [
         console.error(err);
         reply().code(500);
       });
+    }
+  },
+
+  /**
+   * POST /authenticate/refresh_token
+   * @description
+   * Revoke current token and create a new one
+   */
+  {
+    method: 'POST',
+    path: '/authenticate/refresh_token',
+    config: {
+      auth: {
+        strategy: 'simple'
+      }
+    },
+    handler: function(req, reply) {
+
+      var accessToken = req.auth.credentials.createAccessToken();
+      reply({
+        access_token: accessToken
+      }).code(201);
+
     }
   }
 ];

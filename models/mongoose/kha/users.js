@@ -33,8 +33,6 @@ module.exports = {
       required: true
     },
 
-    accessTokens: [ ],
-
     createdAt: {
       type: Date,
       default: function() {
