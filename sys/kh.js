@@ -6,7 +6,6 @@
  * MIT Licence (MIT)
  */
 var Config = require('config');
-var Mongoose = require('mongoose');
 var _ = require('lodash');
 
 var KH = global['KH'] = {};
@@ -15,8 +14,14 @@ var KH = global['KH'] = {};
 var $$ = {
   'controllers': [],
   'helpers': {},
-  'models': {},
-  'mongooseConnections': {}
+  'models': {
+    'mongo': {},
+    'rethink': {}
+  },
+  'dbs': {
+    'mongo': {},
+    'rethink': {}
+  }
 };
 
 KH.utils = require('./utils.js');
@@ -77,7 +82,7 @@ KH.$getStrict = function $getStrict(key) {
     return KH.$getStrict(nestedKey);
   };
   if (typeof $$[key] === 'undefined') {
-    throw new Error("The required object isn't again ready");
+    throw new Error("The required object is not available");
     return undefined;
   }
   return $$[key];
@@ -277,124 +282,6 @@ KH.extend = function extend(methodName, objectProperties) {
 };
 
 /**
- * KH.model(modelName)
- * @params {String} modelName
- * @params {Object} modelObject
- *
- * @description
- * Getter / Setter of mongoose object
- *
- * @usage (getter)
- * KH.model('database.collection');
- *
- * If the specified model doesn't exists, KH.model throw an exception
- *
- * @usage (setter) - used by the internal KH builtins
- * KH.model({
- *   database: 'kha',
- *   collection: 'users',
- *   schema: {}
- * });
- *
- * @returns {Function} register mongoose model
- * @returns {Object} KH if KH.model is used as setter
- */
-KH.model = function model(model) {
-
-  // setModel
-  var setModel = function setModel() {
-
-    if (! KH.$get('mongooseConnections', model.database)) {
-      throw new Error("The model database seems unregistered");
-      return KH;
-    }
-
-    var schema = new Mongoose.Schema(model.schema, model.options || {});
-
-    if (model.statics) {
-      for (var modelStatic in model.statics) {
-        schema.statics[modelStatic] = model.statics[modelStatic];
-      }
-    }
-
-    if (model.methods) {
-      for (var modelMethod in model.methods) {
-        schema.methods[modelMethod] = model.methods[modelMethod];
-      }
-    }
-
-    if (model.virtuals) {
-      for (var modelVirtual in model.virtuals) {
-        var getter = model.virtuals[modelVirtual].get;
-        var setter = model.virtuals[modelVirtual].set;
-        if (getter) {
-          schema.virtual(modelVirtual).get(getter);
-        }
-        if (setter) {
-          schema.virtual(modelVirtual).set(setter);
-        }
-      }
-    }
-
-    if (model.middleware) {
-      for (var middlewareMethod in model.middleware) {
-        for (var middlewareActions in model.middleware[middlewareMethod]) {
-          var actions = model.middleware[middlewareMethod][middlewareActions];
-          actions.forEach(function(action) {
-            var actionObject = {
-              parallel: false,
-              action: null
-            };
-
-            if (KH.utils.isObject(action)) {
-              actionObject.parallel = action.parallel || actionObject.parallel;
-              actionObject.action = action.action || actionObject.action;
-            } else {
-              actionObject.parallel = false;
-              actionObject.action = action;
-            }
-
-            if (actionObject.parallel === true) {
-              schema[middlewareMethod](middlewareActions, true, actionObject.action.bind(this));
-            } else {
-              schema[middlewareMethod](middlewareActions, actionObject.action.bind(this));
-            }
-          });
-        }
-      }
-    }
-
-    var registeredModel = KH.$getStrict('mongooseConnections', model.database).model(model.name, schema);
-
-    KH.$store('models', model.database, model.name, registeredModel);
-
-    return KH;
-  };
-
-  // getModel
-  var getModel = function getModel() {
-
-    var arrArg = model.split('.');
-
-    if (! arrArg || arrArg.length !== 2) {
-      throw new Error("KH.model need the database.collection argument");
-      return false;
-    }
-
-    var database = arrArg[0];
-    var collection = arrArg[1];
-
-    return KH.$getStrict('models', database, collection);
-  };
-
-  if (KH.utils.isObject(model)) {
-    return setModel();
-  } else {
-    return getModel();
-  }
-};
-
-/**
  * KH.server()
  * @description
  * Get the current Hapi Server object
@@ -404,3 +291,7 @@ KH.model = function model(model) {
 KH.server = function server() {
   return KH.$get('server');
 };
+
+
+// third parties
+require('./model.js');

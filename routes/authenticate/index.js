@@ -1,5 +1,5 @@
 var joi = require('joi');
-var Users = KH.model('kha.users');
+var Users = KH.model('mongo.kha.users');
 
 /**
  *

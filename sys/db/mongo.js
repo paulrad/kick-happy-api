@@ -1,6 +1,6 @@
 var Mongoose = require('mongoose');
 
-var mongoConnections = KH.config('mongodb');
+var mongoConnections = KH.config('dbs.mongo');
 
 if (! KH.utils.isArray(mongoConnections)) {
   throw new Error("The mongodb configuration object should be an array of objects");
@@ -22,5 +22,8 @@ mongoConnections.forEach(function(mongoConnection) {
     KH.log('info', "Connected on the mongodb database: %s", mongoConnection.database);
   });
 
-  KH.$store('mongooseConnections', mongoConnection.database, mongooseConnection);
+  KH.$store('dbs', 'mongo', mongoConnection.database, mongooseConnection);
 });
+
+// Load mongoose models
+require('./mongo.models.js').loader();

@@ -10,21 +10,33 @@
     "algorithm": "HS256"
   },
 
-  "mongodb": [
-    {
-      "database": "kha",
-      "uri": "mongodb://localhost",
-      "options": {
-        "db": {
-          "native_parser": true
+  "dbs": {
+    "mongo": [
+      {
+        "database": "kha",
+        "uri": "mongodb://localhost",
+        "options": {
+          "db": {
+            "native_parser": true
+          }
         }
       }
-    }
-  ],
+    ],
+
+    "rethink": [
+      {
+        "host": "localhost",
+        "port": 28015,
+        "authKey": "",
+        "db": "kha"
+      }
+    ]
+  },
 
   "winston": {
     "console": {
-      "timestamp": true
+      "timestamp": true,
+      "level": "debug"
     }
   }
 

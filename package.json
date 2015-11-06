@@ -35,6 +35,7 @@
     "lodash": "^3.10.1",
     "mongoose": "^4.2.3",
     "rethinkdb": "^2.1.1",
+    "thinky": "^2.1.11",
     "winston": "^2.0.0"
   },
   "devDependencies": {

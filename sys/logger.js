@@ -9,5 +9,5 @@ var logger = new Winston.Logger({
 
 KH.$store('logger', logger);
 
-KH.log = logger.log.bind(logger);
-KH.info = logger.info.bind(logger);
+KH.extend('log', logger.log.bind(logger));
+KH.extend('info', logger.info.bind(logger));

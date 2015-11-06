@@ -10,7 +10,7 @@ require('./sys/kh.js');
 require('./sys/logger.js');
 
 require('./sys/db/mongo.js');
-require('./sys/db/mongo.models.js');
+require('./sys/db/rethink.js');
 
 require('./sys/hapi.js');
 require('./sys/server.js');
