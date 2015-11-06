@@ -12,13 +12,28 @@ module.exports = [
     config: {
       validate: {
         payload: {
-          username: joi.string().email().required(),
+          email: joi.string().email().required(),
           password: joi.string().required()
         }
       }
     },
     handler: function(req, reply) {
-      reply();
+      var dbquery = Users.authenticate(req.payload);
+
+      dbquery.then(function(authToken) {
+        if (! authToken) {
+          reply().code(401);
+        } else {
+          reply({
+            auth_token: authToken
+          });
+        }
+      });
+
+      dbquery.catch(function(err) {
+        console.error(err);
+        reply().code(500);
+      });
     }
   }
 ];

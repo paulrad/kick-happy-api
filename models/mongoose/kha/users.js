@@ -1,4 +1,5 @@
 var Types = require('mongoose').Schema.Types;
+var bcrypt = require('bcrypt');
 
 module.exports = {
 
@@ -17,6 +18,11 @@ module.exports = {
       required: true
     },
 
+    password: {
+      type: String,
+      required: true
+    },
+
     firstname: {
       type: String,
       required: true
@@ -26,6 +32,8 @@ module.exports = {
       type: String,
       required: true
     },
+
+    accessTokens: [ ],
 
     createdAt: {
       type: Date,
@@ -66,16 +74,14 @@ module.exports = {
 
   // List of methods accessibles
   methods: {
-    'myMethod': function() {
-
+    // @from http://stackoverflow.com/questions/14588032/mongoose-password-hashing
+    comparePassword: function(candidatePassword, cb) {
+      return bcrypt.compareSync(candidatePassword, this.password);
     }
   },
 
   // List of statics accessibles
   statics: {
-    'myStatic': function() {
-
-    }
   },
 
   // List of middleware
@@ -84,7 +90,22 @@ module.exports = {
     pre: {
       init: [],
       validate: [],
-      save: [],
+      save: [
+        // @from http://stackoverflow.com/questions/14588032/mongoose-password-hashing
+        function(next) {
+          var user = this;
+
+          if (! user.isModified('password')) {
+            return next();
+          }
+
+          var salt = bcrypt.genSaltSync(10);
+          var hash = bcrypt.hashSync(user.password, salt);
+          user.password = hash;
+          next();
+
+        }
+      ],
       remove: [],
       count: [],
       find: [],

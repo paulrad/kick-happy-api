@@ -2,6 +2,9 @@
  *
  *
  */
+
+var Joi = require('joi');
+
 module.exports = [
   {
     method: 'GET',
@@ -13,7 +16,7 @@ module.exports = [
       }
     },
     handler: function(req, reply) {
-      var dbquery = KH.model('kha.users').find({}).lean().exec();
+      var dbquery = KH.model('mongo.kha.users').find({}).lean().exec();
 
       dbquery.then(function(users) {
         reply(users).code(200);
@@ -36,15 +39,25 @@ module.exports = [
   {
     method: 'POST',
     path: '/users',
+    config: {
+      validate: {
+        payload: {
+          email: Joi.string().email().required(),
+          password: Joi.string(),
+          firstname: Joi.string().required(),
+          lastname: Joi.string().required()
+        }
+      }
+    },
     handler: function(req, reply) {
-      var dbquery = KH.model('kha.users').create(req.payload);
+      var dbquery = KH.model('mongo.kha.users').create(req.payload);
 
       dbquery.then(function() {
         reply().code(201);
       });
 
-      dbquery.onReject(function(err) {
-        reply(err).code(500);
+      dbquery.onReject(function() {
+        reply().code(500);
       });
     }
   },

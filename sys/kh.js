@@ -5,6 +5,7 @@
  * @copyright 2015 Paul Rad
  * MIT Licence (MIT)
  */
+var Q = require('bluebird');
 var Config = require('config');
 var _ = require('lodash');
 
@@ -38,10 +39,16 @@ KH.version = require('../package.json')['version'];
  * @returns KH
  * @todo description
  */
-
 KH.$store = function $store(key, value /* infinite args where value is the last arg */) {
   if (arguments.length === 2) {
-    $$[key] = value;
+    if (KH.utils.isDefined($$[key]) && $$[key]._KH_Magical_Promise === true) {
+      // its a KH magic promise
+      $$[key].resolve(value);
+      $$[key] = _.merge($$[key], value);
+    } else {
+      // normal setter
+      $$[key] = value;
+    }
   } else {
     var args = Array.prototype.slice.call(arguments);
     value = args[args.length - 1];
@@ -73,7 +80,7 @@ KH.$get = function $get(key) {
   return $$[key];
 };
 
-// @alias wi throwable exception in case of undefined value
+// @alias without the throwed exception in case of undefined value
 // @todo: undo the duplication... move the nestedKey generation away !
 KH.$getStrict = function $getStrict(key) {
   var args = Array.prototype.slice.call(arguments);
@@ -86,14 +93,41 @@ KH.$getStrict = function $getStrict(key) {
     return undefined;
   }
   return $$[key];
-}
+};
+
+// @alias if the value is not ready yet, we return a `magic` promise fulfilled
+// by the value when ready
+// @todo: undo the duplication... move the nestedKey generation away !
+KH.$getPromise = function $getPromise(key) {
+  var args = Array.prototype.slice.call(arguments);
+  if (args.length > 1) {
+    var nestedKey = args.join('.');
+    return KH.$getPromise(nestedKey);
+  };
+
+  if (typeof $$[key] === 'undefined') {
+    var deferred = Q.defer();
+    deferred._KH_Magical_Promise = true;
+    KH.$store(key, deferred);
+  }
+  return $$[key];
+};
 
 /**
  * KH.config(property)
  * @params {String} property
  * @alias of require('config').get(property)
+ * @override
+ * Disable the default exception if the property can be found (returns NULL instead)
  */
-KH.config = Config.get.bind(Config);
+KH.config = function(property) {
+  try {
+    var v = Config.get(property);
+  } catch (e) {
+    return null;
+  }
+  return v;
+};
 
 /**
  * KH.controller(path | route)

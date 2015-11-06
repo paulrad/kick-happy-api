@@ -9,8 +9,13 @@
 require('./sys/kh.js');
 require('./sys/logger.js');
 
-require('./sys/db/mongo.js');
-require('./sys/db/rethink.js');
+if (KH.config('dbs.mongo')) {
+  require('./sys/db/mongo.js');
+}
+
+if (KH.config('dbs.rethink')) {
+  require('./sys/db/rethink.js');  
+}
 
 require('./sys/hapi.js');
 require('./sys/server.js');

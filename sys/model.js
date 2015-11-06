@@ -3,6 +3,10 @@
  *
  */
 
+ var _ = require('lodash');
+
+ var defaultsConfigurations = {};
+
  var modelDbInstaller = function(dbtype, configuration) {
 
   try {
@@ -12,7 +16,17 @@
     return ;
   }
 
-  return ModelFunction(configuration);
+  var cacheKey = function() {
+    return dbtype + '.' + configuration.name + '.' + configuration.database;
+  }();
+
+  if (KH.utils.isUndefined(defaultsConfigurations[cacheKey])) {
+    defaultsConfigurations[cacheKey] = configuration;
+  } else {
+    defaultsConfigurations[cacheKey] = _.merge(defaultsConfigurations[cacheKey], configuration);
+  }
+
+  return ModelFunction(defaultsConfigurations[cacheKey]);
  };
 
 
@@ -60,7 +74,7 @@ var model = function model(model, configuration) {
     var database = arrArg[1];
     var collection = arrArg[2];
 
-    return KH.$getStrict('models', dbtype, database, collection);
+    return KH.$getPromise('models', dbtype, database, collection);
   };
 
   return getModel();

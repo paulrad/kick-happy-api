@@ -3,6 +3,8 @@
  * @see https://www.npmjs.com/package/hapi-auth-jwt2
  */
 
+var Q = require('bluebird');
+
 // Validate Function
 var validateFunc = function( decoded, request, callback ) {
 
@@ -43,6 +45,40 @@ KH.server().register(require('hapi-auth-jwt2'), function(error) {
       },
       validateFunc: validateFunc
     });
+  }
+});
+
+// Overriding the users model by adding a new static helper: authenticate
+KH.model('mongo', {
+  database: 'kha',
+  name: 'users',
+  statics: {
+    authenticate: function(payload) {
+      return new Q.Promise(function(resolve, reject) {
+        var dbquery = KH.model('mongo.kha.users').findOne({ email: payload.email }).exec();
+
+        var createAccess = function(user) {
+          if (user && user.comparePassword(payload.password) === true) {
+            var accessToken = KH.helpers.jwt(user._id, user.email);
+            user.accessTokens.push(accessToken);
+            user.save(function(err) {
+              if (err) {
+                reject();
+              } else {
+                resolve(accessToken);
+              }
+            });
+          } else {
+            resolve(null);
+          }
+        };
+
+        dbquery.then(createAccess);
+        dbquery.onReject(function(error) {
+          reject();
+        });
+      });
+    }
   }
 });
 

@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/paulrad/kick-happy-api#readme",
   "dependencies": {
+    "bcrypt": "^0.8.5",
     "bluebird": "^3.0.2",
     "config": "^1.16.0",
     "glob": "^5.0.15",

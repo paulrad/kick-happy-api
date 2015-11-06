@@ -55,16 +55,24 @@ module.exports.model = function(model) {
           }
 
           if (actionObject.parallel === true) {
-            schema[middlewareMethod](middlewareActions, true, actionObject.action.bind(this));
+            schema[middlewareMethod](middlewareActions, true, actionObject.action);
           } else {
-            schema[middlewareMethod](middlewareActions, actionObject.action.bind(this));
+            schema[middlewareMethod](middlewareActions, actionObject.action);
           }
         });
       }
     }
   }
 
-  var registeredModel = KH.$getStrict('dbs', 'mongo', model.database).model(model.name, schema);
+  var mongooseDbInstance = KH.$getStrict('dbs', 'mongo', model.database);
+
+  if (mongooseDbInstance.models[model.name]) {
+    delete mongooseDbInstance.models[model.name];
+    KH.log("debug", "database.model exists: %s.%s", model.database, model.name);
+    KH.log("debug", "removing mongoose schema for overriding");
+  }
+
+  var registeredModel = mongooseDbInstance.model(model.name, schema);
 
   KH.$store('models', 'mongo', model.database, model.name, registeredModel);
 
